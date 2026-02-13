@@ -22,36 +22,29 @@ public class UserDaoHibernateImpl implements UserDao {
     private static final String DROP_USERS_SQL = "DROP TABLE IF EXISTS users;";
     private static final String TRUNCATE_USERS_SQL = "TRUNCATE TABLE users;";
 
-    private final SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory = new Util().buildSessionFactory();
 
     public UserDaoHibernateImpl() {
-        sessionFactory = new Util().buildSessionFactory();
     }
 
     @Override
     public void createUsersTable() {
-        Transaction tx = null;
-
         try (Session session = sessionFactory.openSession()) {
-            tx = session.beginTransaction();
+            Transaction tx = session.beginTransaction();
             session.createNativeQuery(CREATE_USERS_SQL).executeUpdate();
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public void dropUsersTable() {
-        Transaction tx = null;
-
         try (Session session = sessionFactory.openSession()) {
-            tx = session.beginTransaction();
+            Transaction tx = session.beginTransaction();
             session.createNativeQuery(DROP_USERS_SQL).executeUpdate();
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
             throw new RuntimeException(e);
         }
     }
@@ -68,7 +61,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null) {
+                tx.rollback();
+            }
+
             throw new RuntimeException(e);
         }
     }
@@ -87,7 +83,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null) {
+                tx.rollback();
+            }
+
             throw new RuntimeException(e);
         }
     }
@@ -103,14 +102,11 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        Transaction tx = null;
-
         try (Session session = sessionFactory.openSession()) {
-            tx = session.beginTransaction();
+            Transaction tx = session.beginTransaction();
             session.createNativeQuery(TRUNCATE_USERS_SQL).executeUpdate();
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
             throw new RuntimeException(e);
         }
     }

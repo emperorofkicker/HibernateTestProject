@@ -7,7 +7,13 @@ import org.hibernate.cfg.Configuration;
 
 public class Util {
 
+    private SessionFactory sessionFactory;
+
     public SessionFactory buildSessionFactory() {
+        if (sessionFactory != null) {
+            return sessionFactory;
+        }
+
         try {
             Configuration configuration = new Configuration();
 
@@ -20,7 +26,8 @@ public class Util {
             StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties());
 
-            return configuration.buildSessionFactory(builder.build());
+            sessionFactory = configuration.buildSessionFactory(builder.build());
+            return sessionFactory;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
